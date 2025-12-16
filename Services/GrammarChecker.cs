@@ -1,37 +1,49 @@
-﻿using Marjane.Models;
-
-namespace Marjane.Services;
+﻿namespace Marjane.Services;
 
 public class GrammarChecker
 {
-    public AnalysisResult Check(string text)
+    public object Check(string text)
     {
+        int wordCount = text.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length;
+
+        var feedbackList = new List<string>();
+        int errors = 0;
+
         var corrected = text;
-        var feedback = new List<string>();
 
         if (text.Contains("kahapon bukas"))
         {
             corrected = corrected.Replace("kahapon bukas", "bukas");
-            feedback.Add("Magkasalungat ang 'kahapon' at 'bukas'.");
+            feedbackList.Add("Magkasalungat ang 'kahapon' at 'bukas'.");
+            errors++;
         }
 
         if (text.Contains("ako ay kumain bukas"))
         {
             corrected = corrected.Replace("ako ay kumain bukas", "ako ay kakain bukas");
-            feedback.Add("Mali ang tense. Gamitin ang 'kakain' para sa hinaharap.");
+            feedbackList.Add("Mali ang tense. Gamitin ang 'kakain' para sa hinaharap.");
+            errors++;
         }
 
         if (!corrected.EndsWith('.'))
         {
             corrected += ".";
-            feedback.Add("Lagyan ng tuldok ang pangungusap.");
+            feedbackList.Add("Lagyan ng tuldok ang pangungusap.");
+            errors++;
         }
 
-        return new AnalysisResult
+        int errorPercent = wordCount == 0
+            ? 0
+            : Math.Min(100, (errors * 100) / wordCount);
+
+        return new
         {
-            OriginalText = text,
-            CorrectedText = corrected,
-            Feedback = feedback
+            originalText = text,
+            correctedText = corrected,
+            wordCount,
+            errors,
+            errorPercent,
+            feedback = feedbackList
         };
     }
 }

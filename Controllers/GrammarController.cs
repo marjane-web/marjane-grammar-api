@@ -14,9 +14,7 @@ public class GrammarController : ControllerBase
     public IActionResult CheckGrammar([FromBody] GrammarRequest request)
     {
         if (request == null || string.IsNullOrWhiteSpace(request.Text))
-        {
-            return BadRequest("Walang text na ipinasa.");
-        }
+            return BadRequest("Walang text.");
 
         var result = _checker.Check(request.Text);
         return Ok(result);

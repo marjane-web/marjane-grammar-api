@@ -1,15 +1,24 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+﻿var builder = WebApplication.CreateBuilder(args);
 
-var builder = WebApplication.CreateBuilder(args);
+// 🔥 ADD CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
 
-// Add controllers
+// Controllers
 builder.Services.AddControllers();
 
 var app = builder.Build();
 
-// Map controller routes
-app.MapControllers();
+// 🔥 USE CORS (IMPORTANT)
+app.UseCors("AllowAll");
 
+app.MapControllers();
 app.Run();
