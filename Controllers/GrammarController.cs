@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Marjane.Services;
+using Marjane.Models;
 
 namespace Marjane.Controllers;
 
@@ -7,24 +8,17 @@ namespace Marjane.Controllers;
 [Route("api/[controller]")]
 public class GrammarController : ControllerBase
 {
-    private readonly GrammarChecker _checker;
+    private readonly GrammarChecker _checker = new();
 
-    public GrammarController()
-    {
-        _checker = new GrammarChecker();
-    }
-
-    // 👉 DIRETSONG TEXT INPUT (WALANG JSON OBJECT)
     [HttpPost("check")]
-    [Consumes("application/json")]
-    public IActionResult CheckGrammar([FromBody] string text)
+    public IActionResult CheckGrammar([FromBody] GrammarRequest request)
     {
-        if (string.IsNullOrWhiteSpace(text))
+        if (request == null || string.IsNullOrWhiteSpace(request.Text))
         {
             return BadRequest("Walang text na ipinasa.");
         }
 
-        var result = _checker.Check(text);
+        var result = _checker.Check(request.Text);
         return Ok(result);
     }
 }

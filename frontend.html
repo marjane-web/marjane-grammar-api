@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="tl">
+<head>
+  <meta charset="UTF-8">
+  <title>Tagalog Grammar Checker</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    textarea { width: 100%; height: 150px; }
+    button { margin-top: 10px; padding: 10px; }
+    pre { background: #f4f4f4; padding: 10px; }
+  </style>
+</head>
+<body>
+
+<h2>🇵🇭 Tagalog Grammar Checker</h2>
+
+<textarea id="inputText" placeholder="I-type ang iyong paragraph dito..."></textarea>
+<br>
+<button onclick="checkGrammar()">Check Grammar</button>
+
+<h3>Resulta:</h3>
+<pre id="result"></pre>
+
+<script>
+function checkGrammar() {
+  fetch("http://localhost:9000/api/grammar/check", {
+    method: "POST",
+    headers: {
+      "Content-Type": "text/plain"
+    },
+    body: document.getElementById("inputText").value
+  })
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById("result").textContent =
+      "Corrected Text:\n" + data.correctedText +
+      "\n\nFeedback:\n- " + data.feedback.join("\n- ");
+  })
+  .catch(err => {
+    document.getElementById("result").textContent = "ERROR: " + err;
+  });
+}
+</script>
+
+</body>
+</html>

@@ -1,8 +1,10 @@
-﻿namespace Marjane.Services;
+﻿using Marjane.Models;
+
+namespace Marjane.Services;
 
 public class GrammarChecker
 {
-    public object Check(string text)
+    public AnalysisResult Check(string text)
     {
         var corrected = text;
         var feedback = new List<string>();
@@ -19,17 +21,17 @@ public class GrammarChecker
             feedback.Add("Mali ang tense. Gamitin ang 'kakain' para sa hinaharap.");
         }
 
-        if (!corrected.EndsWith("."))
+        if (!corrected.EndsWith('.'))
         {
             corrected += ".";
             feedback.Add("Lagyan ng tuldok ang pangungusap.");
         }
 
-        return new
+        return new AnalysisResult
         {
-            originalText = text,
-            correctedText = corrected,
-            feedback
+            OriginalText = text,
+            CorrectedText = corrected,
+            Feedback = feedback
         };
     }
 }

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="tl">
+<head>
+<meta charset="UTF-8">
+<title>Marjane Grammar Checker</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f7f2ec;
+  padding: 40px;
+}
+
+.container {
+  max-width: 800px;
+  margin: auto;
+}
+
+h3 {
+  text-align: center;
+}
+
+/* ===== PANTAY NA BOX STYLE ===== */
+textarea,
+.result {
+  width: 100%;
+  height: 180px;
+  border: 2px solid black;
+  padding: 15px;
+  font-size: 16px;
+  box-sizing: border-box;
+  background: white;
+  white-space: pre-line;
+}
+
+textarea {
+  resize: none;
+}
+
+button {
+  display: block;
+  margin: 20px auto;
+  padding: 12px 30px;
+  font-size: 16px;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h3>Ilagay ang iyong talata dito</h3>
+
+  <textarea id="input" placeholder="Ilagay ang iyong teksto dito..."></textarea>
+
+  <button onclick="checkGrammar()">Suriin ang Balarila</button>
+
+  <div class="result" id="result">
+  </div>
+</div>
+
+<script>
+// ================= FEEDBACK DATA =================
+const feedback = {
+  "91-100": [
+    "Fidbak: Malaki ang kakulangan sa gramatika ng sanaysay.",
+    "Fidbak: Halos hindi maunawaan ang mga pangungusap."
+  ],
+  "81-90": [
+    "Fidbak: Maraming gramatikal na pagkakamali.",
+    "Fidbak: Maraming mali sa paggamit ng salita."
+  ],
+  "71-80": [
+    "Fidbak: Naiintindihan ang ilang bahagi ngunit may error.",
+    "Fidbak: Kulang ang kasanayan sa gramatika."
+  ],
+  "61-70": [
+    "Fidbak: May ilang bahagi na tama ang gramatika."
+  ],
+  "51-60": [
+    "Fidbak: Katanggap-tanggap ngunit may paulit-ulit na error."
+  ],
+  "41-50": [
+    "Fidbak: May ilang minor na gramatikal na error."
+  ],
+  "31-40": [
+    "Fidbak: Karamihan ay tama ang estruktura."
+  ],
+  "21-30": [
+    "Fidbak: Malinaw at mahusay ang grammar."
+  ],
+  "11-20": [
+    "Fidbak: Halos perpekto ang grammar."
+  ],
+  "1-10": [
+    "Fidbak: Perpekto ang grammar."
+  ]
+};
+
+// ================= LEVEL FUNCTIONS =================
+function getLevelKey(percent) {
+  if (percent >= 91) return "91-100";
+  if (percent >= 81) return "81-90";
+  if (percent >= 71) return "71-80";
+  if (percent >= 61) return "61-70";
+  if (percent >= 51) return "51-60";
+  if (percent >= 41) return "41-50";
+  if (percent >= 31) return "31-40";
+  if (percent >= 21) return "21-30";
+  if (percent >= 11) return "11-20";
+  return "1-10";
+}
+
+function getLevelDescription(key) {
+  return {
+    "91-100": "Napakababa",
+    "81-90": "Mababa",
+    "71-80": "Di-kasiya-siya",
+    "61-70": "Katamtaman",
+    "51-60": "Katanggap-tanggap",
+    "41-50": "Medyo Mahusay",
+    "31-40": "Mahusay",
+    "21-30": "Napakahusay",
+    "11-20": "Halos Perpekto",
+    "1-10": "Perpekto o Malapit sa Perpekto"
+  }[key];
+}
+
+// ================= MAIN FUNCTION =================
+async function checkGrammar() {
+  const text = document.getElementById("input").value.trim();
+
+  if (!text) {
+    alert("Pakilagay muna ang iyong pangungusap bago pindutin ang 'Suriin ang Balarila'.");
+    return;
+  }
+
+  const response = await fetch(
+    "https://marjane-grammar-api.onrender.com/api/grammar/check",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text })
+    }
+  );
+
+  const data = await response.json();
+
+  const levelKey = getLevelKey(data.errorPercent);
+  const randomFeedback =
+    feedback[levelKey][Math.floor(Math.random() * feedback[levelKey].length)];
+
+  document.getElementById("result").textContent =
+`📊 Bilang ng mga salita: ${data.wordCount}
+⚠ Natukoy na error: ${data.errors}
+📘 Antas: ${getLevelDescription(levelKey)}
+
+${randomFeedback}`;
+}
+</script>
+
+</body>
+</html>

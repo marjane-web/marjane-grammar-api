@@ -1,16 +1,19 @@
-﻿public static class FeedbackProvider
+﻿using System;
+using System.Collections.Generic;
+
+public static class FeedbackProvider
 {
-    private static Dictionary<string, List<string>> feedback =
-        new Dictionary<string, List<string>>
-    {
+    private static readonly Dictionary<string, List<string>> feedback =
+        new()
         {
-            "91-100",
-            new List<string>
             {
-                "Fidbak: Malaki ang kakulangan sa gramatika ng sanaysay."
+                "91-100",
+                new List<string>
+                {
+                    "Fidbak: Malaki ang kakulangan sa gramatika ng sanaysay."
+                }
             }
-        }
-    };
+        };
 
     public static string GetRandomFeedback(string levelKey)
     {
